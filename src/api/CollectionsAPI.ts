@@ -1,6 +1,6 @@
 import { CollectionsRepository } from "types/CollectionsRepository.type";
 import makeRequest from "../utils/makeRequest";
-const apiUrl = import.meta.env.VITE_BACKEND_URL;
+import { BACKEND_URL } from "../const/basicData"
 
 export type CollectionsRepositoryAPICollectionsRepositoryResponseData =
     CollectionsRepository;
@@ -12,7 +12,7 @@ function getCollectionsRepository(
         CollectionsRepositoryAPICollectionsRepositoryResponseData
     >({
         method: "GET",
-        url: 'http://' + apiUrl + '/collections',
+        url: BACKEND_URL + '/collections',
         config: { authorized: false }
     })
 }

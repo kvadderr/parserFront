@@ -5,7 +5,7 @@ import CollectionBlock from "../shared/CollectionBlock";
 
 const { Title } = Typography;
 const Collection = () => {
-  const [collectionBlocks, setCollectionBlocks] = useState<string[]>([]);
+  const [collectionBlocks, setCollectionBlocks] = useState([]);
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [input, setInput] = useState('');
@@ -23,7 +23,7 @@ const Collection = () => {
     setTimeout(() => {
       setOpen(false);
       setConfirmLoading(false);
-      setCollectionBlocks([...collectionBlocks, input]);
+      setCollectionBlocks([...collectionBlocks, {label: input, tags: ["dada", "daad"]}]);
     }, 1000);
   };
 

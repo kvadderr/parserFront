@@ -1,7 +1,7 @@
 import { DataFile } from "types/DataFile.type";
 import { ConvertFile } from "types/ConvertFile.type";
 import makeRequest from "../utils/makeRequest";
-const apiUrl = import.meta.env.VITE_BACKEND_URL;
+import { BACKEND_URL } from "../const/basicData"
 /*
 export type DataFileAPICreateDataFileRequestData = File;
 export type DataFileAPICreateDataFileResponseData =
@@ -31,15 +31,13 @@ export type ConvertFileAPIConvertFileResponseData =
 function convertDataFile(
     data = ConvertFileAPIConvertFileRequestData
 ) {
-    console.log('apiUrl', apiUrl);
-    console.log('apiUrl#2', data);
     const req = {filename: data};
     return makeRequest<
         ConvertFileAPIConvertFileRequestData,
         DataFileAPICreateDataFileResponseData
     >({
         method: "POST",
-        url: 'http://' + apiUrl + '/convert',
+        url: BACKEND_URL + '/convert',
         config: { authorized: false },
         data: req,
     })

@@ -20,7 +20,7 @@ const CollectionBlock = (props: any) => {
   }, [inputVisible]);
 
   useEffect(() => {
-    setTags(props.tags)
+    setTags(props.label.tags)
   }, [])
 
   const handleClose = (removedTag: string) => {
@@ -74,7 +74,7 @@ const CollectionBlock = (props: any) => {
   return (
     <>
       <div style={{ marginBottom: 16 }}>
-        <Title level={5}>{props.label}</Title>
+        <Title level={5}>{props.label.label}</Title>
         <Space>
           <TweenOneGroup
             enter={{
