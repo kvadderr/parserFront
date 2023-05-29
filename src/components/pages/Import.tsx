@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { message, Steps, Spin, Table, Space, Checkbox, theme } from "antd";
-import * as Papa from 'papaparse';
+import {
+  message,
+  Steps,
+  Spin,
+  Table,
+  Space,
+  Checkbox,
+  List,
+  Avatar,
+  theme,
+} from "antd";
+import * as Papa from "papaparse";
 import UploadFile from "../shared/UploadFile";
 
 const steps = [
@@ -19,7 +29,7 @@ const steps = [
     description: "Data setup",
     key: "Last-content",
   },
-  
+
   {
     title: "Processing",
     description: "Build current data",
@@ -45,38 +55,52 @@ const Import = () => {
       download: true,
       header: isHeader,
       complete: function (results, file) {
+        console.log(results);
         if (isHeader) {
-            const formattedData = results?.meta?.fields?.map((item: string) => ({
-                title: item,
-                dataIndex: item,
-                key: item,
-              }));
-              setColumns(formattedData);
+          const formattedData = results?.meta?.fields?.map((item: string) => ({
+            title: item,
+            dataIndex: item,
+            key: item,
+          }));
+          setColumns(formattedData);
         } else {
-            const formattedData = [];
-            let step;
-            for (step = 0; step < results.data[0].length; step++) {
-                formattedData.push({
-                    title: step,
-                    dataIndex: step,
-                    key: step,
-                })
-            }
-            setColumns(formattedData);
+          const formattedData = [];
+          let step;
+          for (step = 0; step < results.data[0].length; step++) {
+            formattedData.push({
+              title: step,
+              dataIndex: step,
+              key: step,
+            });
+          }
+          setColumns(formattedData);
         }
-        
-        
+
         setTableData(results.data);
         next();
       },
     });
+    console.log("table", tableData);
   }, [fileName]);
-
-  
 
   const next = () => {
     setCurrent(current + 1);
   };
+
+  const data = [
+    {
+      title: "Ant Design Title 1",
+    },
+    {
+      title: "Ant Design Title 2",
+    },
+    {
+      title: "Ant Design Title 3",
+    },
+    {
+      title: "Ant Design Title 4",
+    },
+  ];
 
   const contentStyle: React.CSSProperties = {
     color: token.colorTextTertiary,
@@ -85,13 +109,27 @@ const Import = () => {
 
   const content = [
     {
-      data: <UploadFile setIsHeader={setIsHeader} next={next} setFileName={setFileName} />
+      data: (
+        <UploadFile
+          setIsHeader={setIsHeader}
+          next={next}
+          setFileName={setFileName}
+        />
+      ),
     },
     {
       data: <Spin size="large" />,
     },
     {
-      data: <Table dataSource={tableData} columns={columns} scroll={{ x: 1300 }}/>,
+      data: (
+        <>
+          <Table
+              dataSource={tableData}
+              columns={columns}
+              scroll={{ x: 1300 }}
+            />
+        </>
+      ),
     },
   ];
   return (

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { TweenOneGroup } from "rc-tween-one";
 import type { InputRef } from "antd";
-import { Input, Tag, theme, Typography, Space } from "antd";
+import { Input, Tag, theme, Typography, Space, Button } from "antd";
 
 const { Title } = Typography;
 
@@ -10,7 +10,7 @@ const CollectionBlock = (props: any) => {
   const { token } = theme.useToken();
   const [tags, setTags] = useState<string[]>([]);
   const [inputVisible, setInputVisible] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<InputRef>(null);
 
   useEffect(() => {
@@ -20,8 +20,8 @@ const CollectionBlock = (props: any) => {
   }, [inputVisible]);
 
   useEffect(() => {
-    setTags(props.label.tags)
-  }, [])
+    setTags(props.label.tags);
+  }, []);
 
   const handleClose = (removedTag: string) => {
     const newTags = tags.filter((tag) => tag !== removedTag);
@@ -64,7 +64,7 @@ const CollectionBlock = (props: any) => {
     );
   };
 
-  const tagChild = tags.map(forMap);
+  const tagChild = tags?.map(forMap);
 
   const tagPlusStyle = {
     background: token.colorBgContainer,
@@ -74,7 +74,11 @@ const CollectionBlock = (props: any) => {
   return (
     <>
       <div style={{ marginBottom: 16 }}>
-        <Title level={5}>{props.label.label}</Title>
+        <Space direction='vertical'>
+        <Space align="baseline">
+          <Title level={5}>{props.label.label}</Title>
+          <Button type="primary" shape="circle" icon={<DeleteOutlined />} size='small' />
+        </Space>
         <Space>
           <TweenOneGroup
             enter={{
@@ -109,6 +113,7 @@ const CollectionBlock = (props: any) => {
               <PlusOutlined /> Новый тэг
             </Tag>
           )}
+        </Space>
         </Space>
       </div>
     </>

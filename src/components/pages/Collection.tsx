@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Button, Modal, Input } from "antd";
+import CollectionsAPI from "../../api/CollectionsAPI";
 
 import CollectionBlock from "../shared/CollectionBlock";
 
@@ -8,9 +9,19 @@ const Collection = () => {
   const [collectionBlocks, setCollectionBlocks] = useState([]);
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await CollectionsAPI.getCollectionsRepository();
+      setCollectionBlocks(response.data);
+    };
+    fetchData();
+  }, []);
+
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setInput(e.target.value);
   };
 
@@ -18,13 +29,15 @@ const Collection = () => {
     setOpen(true);
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     setConfirmLoading(true);
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-      setCollectionBlocks([...collectionBlocks, {label: input, tags: ["dada", "daad"]}]);
-    }, 1000);
+    const response = await CollectionsAPI.createCollectionsRepository({
+      label: input,
+      tags: [],
+    });
+    setOpen(false);
+    setConfirmLoading(false);
+    setCollectionBlocks([...collectionBlocks, { label: input, tags: [] }]);
   };
 
   const handleCancel = () => {
@@ -36,7 +49,7 @@ const Collection = () => {
     <>
       <Title level={3}>Collections</Title>
 
-      {collectionBlocks.map((data, index) => (
+      {collectionBlocks?.map((data, index) => (
         <CollectionBlock label={data} key={index} />
       ))}
       <Button type="primary" onClick={showModal}>
@@ -49,7 +62,7 @@ const Collection = () => {
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
       >
-        <Input placeholder="Collection's name" onChange={onChange}/>
+        <Input placeholder="Collection's name" onChange={onChange} />
       </Modal>
     </>
   );
