@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { TweenOneGroup } from "rc-tween-one";
 import type { InputRef } from "antd";
-import { Input, Tag, theme, Typography, Space, Button } from "antd";
+import { Input, Tag, theme, Typography, Space, Button, Popconfirm } from "antd";
 
 const { Title } = Typography;
 
@@ -12,6 +12,8 @@ const CollectionBlock = (props: any) => {
   const [inputVisible, setInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<InputRef>(null);
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   useEffect(() => {
     if (inputVisible) {
@@ -22,6 +24,24 @@ const CollectionBlock = (props: any) => {
   useEffect(() => {
     setTags(props.label.tags);
   }, []);
+
+  const showPopconfirm = () => {
+    setOpen(true);
+  };
+
+  const confirmOk = () => {
+    setConfirmLoading(true);
+
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const confirmCancel = () => {
+    console.log("Clicked cancel button");
+    setOpen(false);
+  };
 
   const handleClose = (removedTag: string) => {
     const newTags = tags.filter((tag) => tag !== removedTag);
@@ -74,46 +94,61 @@ const CollectionBlock = (props: any) => {
   return (
     <>
       <div style={{ marginBottom: 16 }}>
-        <Space direction='vertical'>
-        <Space align="baseline">
-          <Title level={5}>{props.label.label}</Title>
-          <Button type="primary" shape="circle" icon={<DeleteOutlined />} size='small' />
-        </Space>
-        <Space>
-          <TweenOneGroup
-            enter={{
-              scale: 0.8,
-              opacity: 0,
-              type: "from",
-              duration: 100,
-            }}
-            onEnd={(e) => {
-              if (e.type === "appear" || e.type === "enter") {
-                (e.target as any).style = "display: inline-block";
-              }
-            }}
-            leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
-            appear={false}
-          >
-            {tagChild}
-          </TweenOneGroup>
-          {inputVisible ? (
-            <Input
-              ref={inputRef}
-              type="text"
-              size="small"
-              style={{ width: 78 }}
-              value={inputValue}
-              onChange={handleInputChange}
-              onBlur={handleInputConfirm}
-              onPressEnter={handleInputConfirm}
-            />
-          ) : (
-            <Tag onClick={showInput} style={tagPlusStyle}>
-              <PlusOutlined /> Новый тэг
-            </Tag>
-          )}
-        </Space>
+        <Space direction="vertical">
+          <Space align="baseline">
+            <Title level={5}>{props.label.label}</Title>
+            <Popconfirm
+              title="Title"
+              description="Open Popconfirm with async logic"
+              open={open}
+              onConfirm={confirmOk}
+              okButtonProps={{ loading: confirmLoading }}
+              onCancel={confirmCancel}
+            >
+              <Button
+                type="primary"
+                shape="circle"
+                onClick={showPopconfirm}
+                icon={<DeleteOutlined />}
+                size="small"
+              />
+            </Popconfirm>
+          </Space>
+          <Space>
+            <TweenOneGroup
+              enter={{
+                scale: 0.8,
+                opacity: 0,
+                type: "from",
+                duration: 100,
+              }}
+              onEnd={(e) => {
+                if (e.type === "appear" || e.type === "enter") {
+                  (e.target as any).style = "display: inline-block";
+                }
+              }}
+              leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
+              appear={false}
+            >
+              {tagChild}
+            </TweenOneGroup>
+            {inputVisible ? (
+              <Input
+                ref={inputRef}
+                type="text"
+                size="small"
+                style={{ width: 78 }}
+                value={inputValue}
+                onChange={handleInputChange}
+                onBlur={handleInputConfirm}
+                onPressEnter={handleInputConfirm}
+              />
+            ) : (
+              <Tag onClick={showInput} style={tagPlusStyle}>
+                <PlusOutlined /> Новый тэг
+              </Tag>
+            )}
+          </Space>
         </Space>
       </div>
     </>

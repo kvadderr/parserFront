@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Button, Modal, Input } from "antd";
+import { Typography, Button, Modal, Input, TreeSelect  } from "antd";
 import CollectionsAPI from "../../api/CollectionsAPI";
-
 import CollectionBlock from "../shared/CollectionBlock";
 
 const { Title } = Typography;
@@ -10,7 +9,11 @@ const Collection = () => {
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [input, setInput] = useState("");
-
+  const [value, setValue] = useState<string>();
+  const onChangeData = (newValue: string) => {
+    console.log(newValue);
+    setValue(newValue);
+  };
   useEffect(() => {
     const fetchData = async () => {
       const response = await CollectionsAPI.getCollectionsRepository();
@@ -41,16 +44,16 @@ const Collection = () => {
   };
 
   const handleCancel = () => {
-    console.log("Clicked cancel button");
     setOpen(false);
   };
+
+  
 
   return (
     <>
       <Title level={3}>Collections</Title>
-
       {collectionBlocks?.map((data, index) => (
-        <CollectionBlock label={data} key={index} />
+        <CollectionBlock label={data} key={data._id} />
       ))}
       <Button type="primary" onClick={showModal}>
         Add new collection
