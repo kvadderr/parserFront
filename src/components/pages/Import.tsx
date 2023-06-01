@@ -17,7 +17,7 @@ import UploadFile from "../shared/UploadFile";
 import ColumnData from "../shared/ColumnData";
 import CollectionsAPI from "../../api/CollectionsAPI";
 import StepsItem from "../../const/stepsItem";
-import { BACKEND_URL } from "../const/basicData";
+import { BACKEND_URL } from "../../const/basicData";
 
 const { Text } = Typography;
 const Import = () => {
