@@ -17,6 +17,8 @@ import UploadFile from "../shared/UploadFile";
 import ColumnData from "../shared/ColumnData";
 import CollectionsAPI from "../../api/CollectionsAPI";
 import StepsItem from "../../const/stepsItem";
+import { BACKEND_URL } from "../const/basicData";
+
 const { Text } = Typography;
 const Import = () => {
   const { token } = theme.useToken();
@@ -105,7 +107,7 @@ const Import = () => {
   };
 
   useEffect(() => {
-    Papa.parse("http://127.0.0.1:3000/files/" + fileName, {
+    Papa.parse( BACKEND_URL + "/files/" + fileName, {
       download: true,
       header: isHeader,
       complete: function (results, file) {
