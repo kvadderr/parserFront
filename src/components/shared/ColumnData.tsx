@@ -6,7 +6,7 @@ const { Title } = Typography;
 
 const ColumnData = (props: any) => {
   const [value, setValue] = useState<string>();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(false);
 
   const onChangeData = (newValue: string) => {
     console.log('newValue', newValue);
@@ -22,8 +22,8 @@ const ColumnData = (props: any) => {
 
   return (
     <>
-      <Space direction="vertical">
-        <Title level={5}>{props.item.key}</Title>
+     <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+      <Space>
         <Checkbox checked={checked} onChange={onChange}>Included</Checkbox>
         <Cascader
           options={props.treeData}
@@ -31,6 +31,7 @@ const ColumnData = (props: any) => {
           onChange={onChangeData}
         />
       </Space>
+      </div>
     </>
   );
 };

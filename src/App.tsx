@@ -4,6 +4,7 @@ import { Layout, Menu, Button, theme } from "antd";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Collection from "./components/pages/Collection";
+import CurrentData from "./components/pages/CurrentData";
 import Import from "./components/pages/Import";
 import { menuItems } from "./const/menuItems";
 
@@ -50,6 +51,7 @@ const App: React.FC = () => {
               <Route path="/" element={<Collection />} />
               <Route path="/import" element={<Import />} />
               <Route path="/collection" element={<Collection />} />
+              <Route path="/data" element={<CurrentData />} />
             </Routes>
           </Content>
         </Layout>

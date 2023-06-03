@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { LinkOutlined } from "@ant-design/icons";
 import {
   message,
   Steps,
@@ -15,7 +16,9 @@ import {
 import * as Papa from "papaparse";
 import UploadFile from "../shared/UploadFile";
 import ColumnData from "../shared/ColumnData";
+import ImportTable from "../shared/ImportTable";
 import CollectionsAPI from "../../api/CollectionsAPI";
+import CurrentDataApi from "../../api/CurrentDataApi";
 import StepsItem from "../../const/stepsItem";
 import { BACKEND_URL } from "../../const/basicData";
 
@@ -56,6 +59,13 @@ const Import = () => {
     return treeData;
   };
 
+  const uploadData = async (data) => {
+    const response = await CurrentDataApi.createCurrentData({
+      tableData: data
+    });
+    next();
+  }
+
   const updateTableData = (index, newValue) => {
     setColumns((prevColumns) => {
       return prevColumns.map((column, columnIndex) => {
@@ -68,6 +78,7 @@ const Import = () => {
   };
 
   const updateTableDataIsIncluded = (index, value) => {
+    console.log(index, value);
     setColumns((prevColumns) => {
       return prevColumns.map((column, columnIndex) => {
         if (columnIndex === index) {
@@ -78,13 +89,25 @@ const Import = () => {
     });
   };
 
+  const getColumnSearchProps = (item, index) => ({
+    filterDropdown: () => (
+      <ColumnData
+        item={item}
+        index={index}
+        treeData={treeData}
+        updateTableDataIsIncluded={updateTableDataIsIncluded}
+        updateTableData={updateTableData}
+      />
+    ),
+    filterIcon: (filtered: boolean) => <LinkOutlined />,
+  });
+
   useEffect(() => {
     if (collectionBlocks.length != 0)
       setTreeData(convertToTreeData(collectionBlocks));
   }, [collectionBlocks]);
 
   const buildData = () => {
-    
     const updatedTableData = tableData.map((data) => {
       const updatedData = {};
       for (const column of columns) {
@@ -103,21 +126,25 @@ const Import = () => {
     });
     console.log(updatedTableData);
     setTableData(updatedTableData);
-    next()
+    uploadData(updatedTableData);
   };
 
   useEffect(() => {
-    Papa.parse( BACKEND_URL + "/files/" + fileName, {
+    Papa.parse(BACKEND_URL + "/files/" + fileName, {
       download: true,
       header: isHeader,
       complete: function (results, file) {
         if (isHeader) {
-          const formattedData = results?.meta?.fields?.map((item: string) => ({
-            title: item,
-            dataIndex: item,
-            key: item,
-            isIncluded: true,
-          }));
+          const formattedData = results?.meta?.fields?.map(
+            (item: string, index) => ({
+              title: item,
+              dataIndex: item,
+              key: item,
+              isIncluded: false,
+              ...getColumnSearchProps(item, index),
+              width: 150,
+            })
+          );
           setColumns(formattedData);
         } else {
           const formattedData = [];
@@ -128,6 +155,8 @@ const Import = () => {
               dataIndex: step,
               key: step,
               isIncluded: true,
+              ...getColumnSearchProps(item, index),
+              width: 150,
             });
           }
           setColumns(formattedData);
@@ -164,37 +193,20 @@ const Import = () => {
     {
       data: (
         <>
-          <Space direction="vertical" size="small">
-            <List
-              dataSource={columns}
-              grid={{ gutter: 16, column: 2 }}
-              renderItem={(item, index) => (
-                <List.Item>
-                  <ColumnData
-                    item={item}
-                    index={index}
-                    treeData={treeData}
-                    updateTableDataIsIncluded={updateTableDataIsIncluded}
-                    updateTableData={updateTableData}
-                  />
-                </List.Item>
-              )}
-            />
-            <Button onClick={buildData}>Build data</Button>
-            <Table
-              dataSource={tableData}
+          <Button onClick={buildData} style={{marginBottom: 10}}>Build data</Button>
+            <ImportTable
+              treeData={treeData}
+              tableData={tableData}
+              updateTableDataIsIncluded={updateTableDataIsIncluded}
+              updateTableData={updateTableData}
               columns={columns}
-              scroll={{ x: 1300 }}
             />
-          </Space>
         </>
       ),
     },
     {
-      data: (
-        <p> { JSON.stringify(tableData.slice(0, 3)) } </p>
-      )
-    }
+      data: <p> Data is upload</p>,
+    },
   ];
   return (
     <>

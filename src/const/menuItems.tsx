@@ -26,7 +26,7 @@ function getItem(
 
 export const menuItems: MenuProps["items"] = [
   getItem("Визуализация", "sub1", <MailOutlined />, [
-    getItem(<Link to="/operator">Просмотр данных</Link>, "1"),
+    getItem(<Link to="/data">Просмотр данных</Link>, "1"),
     getItem(<Link to="/operator">Экспорт</Link>, "2"),
   ]),
 

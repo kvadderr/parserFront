@@ -3,6 +3,7 @@ import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { TweenOneGroup } from "rc-tween-one";
 import type { InputRef } from "antd";
 import { Input, Tag, theme, Typography, Space, Button, Popconfirm } from "antd";
+import CollectionsAPI from "../../api/CollectionsAPI";
 
 const { Title } = Typography;
 
@@ -29,13 +30,28 @@ const CollectionBlock = (props: any) => {
     setOpen(true);
   };
 
-  const confirmOk = () => {
-    setConfirmLoading(true);
+  const handleRemove = () => {
+    // Удаление элемента из массива collectionBlocks
+    props.setCollectionBlocks(prevCollectionBlocks => {
+      const updatedCollectionBlocks = [...prevCollectionBlocks];
+      const indexToRemove = updatedCollectionBlocks.findIndex(item => item._id === props.label._id);
+      if (indexToRemove !== -1) {
+        updatedCollectionBlocks.splice(indexToRemove, 1);
+      }
+      return updatedCollectionBlocks;
+    });
+  };
 
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
+  const confirmOk = async() => {
+    setConfirmLoading(true);
+    console.log(props.label._id)
+    const ID = props.label._id
+    const response = await CollectionsAPI.deleteCollectionsRepository({
+      ID
+    });
+    setOpen(false);
+    setConfirmLoading(false);
+    handleRemove();
   };
 
   const confirmCancel = () => {
@@ -57,10 +73,14 @@ const CollectionBlock = (props: any) => {
     setInputValue(e.target.value);
   };
 
-  const handleInputConfirm = () => {
+  const handleInputConfirm = async () => {
     if (inputValue && tags.indexOf(inputValue) === -1) {
       setTags([...tags, inputValue]);
     }
+    const response = await CollectionsAPI.updateCollectionsRepository({
+      label: props.label.label,
+      tags: [...tags, inputValue],
+    });
     setInputVisible(false);
     setInputValue("");
   };
@@ -98,8 +118,8 @@ const CollectionBlock = (props: any) => {
           <Space align="baseline">
             <Title level={5}>{props.label.label}</Title>
             <Popconfirm
-              title="Title"
-              description="Open Popconfirm with async logic"
+              title="Delete collection"
+              description="Are you sure you want to delete the collection?"
               open={open}
               onConfirm={confirmOk}
               okButtonProps={{ loading: confirmLoading }}

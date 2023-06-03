@@ -10,10 +10,12 @@ const Collection = () => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [input, setInput] = useState("");
   const [value, setValue] = useState<string>();
+
   const onChangeData = (newValue: string) => {
     console.log(newValue);
     setValue(newValue);
   };
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await CollectionsAPI.getCollectionsRepository();
@@ -47,13 +49,11 @@ const Collection = () => {
     setOpen(false);
   };
 
-  
-
   return (
     <>
       <Title level={3}>Collections</Title>
       {collectionBlocks?.map((data, index) => (
-        <CollectionBlock label={data} key={data._id} />
+        <CollectionBlock label={data} key={data._id} setCollectionBlocks={setCollectionBlocks} />
       ))}
       <Button type="primary" onClick={showModal}>
         Add new collection
